@@ -4,7 +4,6 @@ import { useEffect, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { preloaderSlides } from "@/lib/content";
 
-const STORAGE_KEY = "tt-preloader-shown";
 const RADIUS_DESKTOP = 220;
 const RADIUS_MOBILE = 125;
 
@@ -14,16 +13,10 @@ export default function Preloader() {
   const [radius, setRadius] = useState(RADIUS_DESKTOP);
 
   useEffect(() => {
-    let alreadyShown = false;
-    try {
-      alreadyShown = sessionStorage.getItem(STORAGE_KEY) === "1";
-    } catch {
-      alreadyShown = false;
-    }
-    if (alreadyShown) return;
-
-    // Reads sessionStorage (an external system) on mount to decide whether to run
-    // the one-time entrance sequence -- not state derived from props/prior state.
+    // Runs the entrance sequence on every full mount of the root layout --
+    // i.e. every hard refresh / fresh page load, matching the reference site.
+    // Client-side <Link> navigation between pages does not remount this layout,
+    // so it won't replay just from clicking around the site.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisible(true);
     document.body.style.overflow = "hidden";
@@ -41,11 +34,6 @@ export default function Preloader() {
       setTimeout(() => {
         setVisible(false);
         document.body.style.overflow = "";
-        try {
-          sessionStorage.setItem(STORAGE_KEY, "1");
-        } catch {
-          /* sessionStorage unavailable */
-        }
       }, 5500),
     ];
 

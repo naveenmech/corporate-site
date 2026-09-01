@@ -4,8 +4,8 @@ import CareersOpenings from "@/components/careers/CareersOpenings";
 import { careersIntro, siteConfig } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: `Careers — ${siteConfig.name}`,
-  description: "Current job openings at " + siteConfig.name + ".",
+  title: `Careers — ${siteConfig.shortName}`,
+  description: "Current job openings at " + siteConfig.shortName + ".",
 };
 
 export default function CareersPage() {

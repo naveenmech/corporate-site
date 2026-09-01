@@ -19,7 +19,7 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: `${siteConfig.name} — Structural Steel Detailing`,
+  title: `${siteConfig.shortName} — Structural Steel Detailing`,
   description: siteConfig.description,
 };
 

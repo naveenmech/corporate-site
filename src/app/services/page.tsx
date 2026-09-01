@@ -6,7 +6,7 @@ import ServiceRow from "@/components/services/ServiceRow";
 import { services, siteConfig } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: `Services — ${siteConfig.name}`,
+  title: `Services — ${siteConfig.shortName}`,
   description: "Core structural steel detailing and engineering services.",
 };
 
