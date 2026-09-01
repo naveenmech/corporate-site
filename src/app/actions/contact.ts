@@ -1,6 +1,6 @@
 "use server";
 
-import { resend, EMAIL_FROM, EMAIL_TO } from "@/lib/resend";
+import { resend, EMAIL_FROM, EMAIL_TO, isEmailConfigured } from "@/lib/resend";
 
 export async function sendEnquiry(formData: FormData) {
   const name = String(formData.get("name") ?? "");
@@ -12,6 +12,11 @@ export async function sendEnquiry(formData: FormData) {
 
   if (!name || !email || !company || !phone || !message) {
     return { success: false, error: "Missing required fields." };
+  }
+
+  if (!isEmailConfigured()) {
+    console.error("RESEND_API_KEY is not set on this environment.");
+    return { success: false, error: "Email service is not configured yet. Please try again later." };
   }
 
   try {

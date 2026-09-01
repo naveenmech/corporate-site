@@ -1,6 +1,6 @@
 "use server";
 
-import { resend, EMAIL_FROM, EMAIL_TO } from "@/lib/resend";
+import { resend, EMAIL_FROM, EMAIL_TO, isEmailConfigured } from "@/lib/resend";
 
 const MAX_RESUME_BYTES = 8 * 1024 * 1024; // 8MB
 
@@ -15,6 +15,11 @@ export async function sendJobApplication(formData: FormData) {
 
   if (!jobTitle || !name || !email || !phone || !experienceType) {
     return { success: false, error: "Missing required fields." };
+  }
+
+  if (!isEmailConfigured()) {
+    console.error("RESEND_API_KEY is not set on this environment.");
+    return { success: false, error: "Email service is not configured yet. Please try again later." };
   }
 
   const attachments: { filename: string; content: Buffer }[] = [];
