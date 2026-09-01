@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
+import { sendEnquiry } from "@/app/actions/contact";
 
 const fields = [
   { name: "name", label: "Name", type: "text", required: true },
@@ -11,13 +12,21 @@ const fields = [
 ] as const;
 
 export default function ContactForm() {
-  const [status, setStatus] = useState<"idle" | "submitting" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "sent" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("submitting");
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setStatus("sent");
+
+    const result = await sendEnquiry(new FormData(e.currentTarget));
+
+    if (result.success) {
+      setStatus("sent");
+    } else {
+      setErrorMessage(result.error ?? "Something went wrong. Please try again.");
+      setStatus("error");
+    }
   }
 
   if (status === "sent") {
@@ -38,6 +47,13 @@ export default function ContactForm() {
       <p className="font-display text-xs font-bold uppercase tracking-widest text-brand-red">
         Project Enquiry
       </p>
+
+      {status === "error" && (
+        <div className="flex items-start gap-2 rounded-sm border border-brand-red/30 bg-brand-red/5 p-4 text-sm text-brand-red">
+          <AlertCircle size={16} className="mt-0.5 shrink-0" />
+          {errorMessage}
+        </div>
+      )}
 
       <div className="grid gap-5 sm:grid-cols-2">
         {fields.map((field) => (

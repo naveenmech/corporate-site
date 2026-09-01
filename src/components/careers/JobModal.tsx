@@ -2,8 +2,9 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, X } from "lucide-react";
+import { CheckCircle2, X, AlertCircle } from "lucide-react";
 import type { openPositions } from "@/lib/content";
+import { sendJobApplication } from "@/app/actions/careers";
 
 type Job = (typeof openPositions)[number];
 
@@ -61,13 +62,24 @@ export default function JobModal({
 }
 
 function JobModalContent({ job }: { job: Job }) {
-  const [status, setStatus] = useState<"idle" | "submitting" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "sent" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("submitting");
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setStatus("sent");
+
+    const formData = new FormData(e.currentTarget);
+    formData.set("jobTitle", job.title);
+
+    const result = await sendJobApplication(formData);
+
+    if (result.success) {
+      setStatus("sent");
+    } else {
+      setErrorMessage(result.error ?? "Something went wrong. Please try again.");
+      setStatus("error");
+    }
   }
 
   return (
@@ -123,6 +135,13 @@ function JobModalContent({ job }: { job: Job }) {
               </h4>
 
               <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                {status === "error" && (
+                  <div className="flex items-start gap-2 rounded-sm border border-brand-red/30 bg-brand-red/5 p-4 text-sm text-brand-red">
+                    <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                    {errorMessage}
+                  </div>
+                )}
+
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block space-y-1">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-navy-light/70">
