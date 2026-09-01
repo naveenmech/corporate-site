@@ -52,6 +52,47 @@ body {
   text-wrap: balance;
 }
 
+@keyframes orbit-spin {
+  0% {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-spin-reverse {
+  0% {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes orbit-dial-in {
+  0% {
+    opacity: 0;
+    transform: rotate(-90deg) translate(0) rotate(90deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--angle)) translate(var(--radius)) rotate(calc(-1 * var(--angle)));
+  }
+}
+
+@keyframes reveal-wipe {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
 ::selection {
   background: var(--brand-red);
   color: white;
